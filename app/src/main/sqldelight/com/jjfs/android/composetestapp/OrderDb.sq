@@ -1,0 +1,27 @@
+CREATE TABLE order_entity (
+  id TEXT NOT NULL PRIMARY KEY,
+  description TEXT NOT NULL
+);
+
+selectAll:
+SELECT *
+FROM order_entity;
+
+insert:
+INSERT OR REPLACE
+INTO order_entity(id, description)
+VALUES (?, ?);
+
+-- update:
+-- UPDATE
+-- INTO order_entity(orderId, description)
+-- WHERE orderId = :orderId;
+-- VALUES (orderId, ?);
+
+getOrder:
+SELECT * FROM order_entity
+WHERE id = :id;
+
+removeOrder:
+DELETE FROM order_entity
+WHERE id = :id;

@@ -9,6 +9,8 @@ import androidx.compose.ui.test.junit4.ComposeContentTestRule
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.test.performGesture
+import androidx.compose.ui.test.swipeLeft
 import androidx.navigation.compose.rememberNavController
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -33,11 +35,9 @@ import org.junit.runner.RunWith
 class MainScreenTest {
 
     @get:Rule
-//    val composeTestRule = createComposeRule()
-    val composeTestRule = createAndroidComposeRule<MainActivity>()
+    val composeTestRule = createComposeRule()
 
-
-//    private val context = InstrumentationRegistry.getInstrumentation().targetContext
+    private val context = InstrumentationRegistry.getInstrumentation().targetContext
 
     @Test
     fun mainTest() {
@@ -58,19 +58,23 @@ class MainScreenTest {
                 direction = DismissDirection.EndToStart
             )
         }
+
         composeTestRule.onNodeWithText("ID1234").assertExists()
+        composeTestRule.onNodeWithText("ID1234").performGesture {
+            this.swipeLeft()
+        }
+
     }
 
     @Test
     fun testLogin() {
         composeTestRule.setContent {
-            Greeting(name = "andrei")
-//            LoginButton(
-//                onClick = {},
-//                isLoading = true
-//            )
+            LoginButton(
+                onClick = {},
+                isLoading = true
+            )
         }
-        composeTestRule.onNodeWithText("ID1234").assertExists()
+        composeTestRule.onNodeWithText("loading").assertExists()
     }
 }
 

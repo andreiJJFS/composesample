@@ -93,7 +93,7 @@ dependencies {
     //sqldelight
     implementation "com.squareup.sqldelight:android-driver:$sql_delight_version"
     implementation("com.squareup.sqldelight:runtime:$sql_delight_version")
-    implementation 'androidx.test:runner:1.4.0'
+//    implementation 'androidx.test:runner:1.4.0'
 
     testImplementation 'junit:junit:4.+'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'

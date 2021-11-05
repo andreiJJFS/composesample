@@ -32,10 +32,7 @@ class MainActivity: ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-//            MainApp()
-            Surface(color = MaterialTheme.colors.background) {
-                Greeting("Android")
-            }
+            MainApp()
         }
     }
 }

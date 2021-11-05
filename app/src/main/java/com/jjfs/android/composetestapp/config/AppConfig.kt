@@ -11,6 +11,8 @@ import com.jjfs.android.composetestapp.business.repository.OrderRepository
 import com.jjfs.android.composetestapp.ui.screens.auth.LoginViewModel
 import com.jjfs.android.composetestapp.ui.screens.detail.DetailViewModel
 import com.jjfs.android.composetestapp.ui.screens.main.MainViewModel
+import com.squareup.sqldelight.android.AndroidSqliteDriver
+import com.squareup.sqldelight.db.SqlDriver
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
 import org.koin.android.ext.koin.androidContext

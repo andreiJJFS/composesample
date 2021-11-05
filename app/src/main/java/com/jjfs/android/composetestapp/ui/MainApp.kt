@@ -19,7 +19,6 @@ import com.jjfs.android.composetestapp.ui.theme.ComposeTestAppTheme
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
-//@ExperimentalAnimationApi
 @ExperimentalMaterialApi
 @Composable
 fun MainApp() {
@@ -39,7 +38,7 @@ fun MainApp() {
             val navBackStackEntry by navController.currentBackStackEntryAsState()
             val currentRoute = navBackStackEntry?.destination?.route ?: Screen.Main.route
 
-//            val sizeAwareDrawerState = rememberSizeAwareDrawerState(false)
+            val sizeAwareDrawerState = rememberSizeAwareDrawerState(false)
             val coroutineScope = rememberCoroutineScope()
             val loginScaffoldState = rememberBottomSheetScaffoldState(
                 bottomSheetState = rememberBottomSheetState(BottomSheetValue.Collapsed)
@@ -48,26 +47,26 @@ fun MainApp() {
                 bottomSheetState = rememberBottomSheetState(BottomSheetValue.Collapsed)
             )
 
-//            ModalDrawer(
-//                drawerContent = {
-//                    AppDrawer(
-//                        currentRoute = currentRoute,
-//                        navigateToHome = { navController.navigate(Screen.Main.route) },
-//                        showAbout = { showBottomSheet(coroutineScope, aboutScaffoldState) },
-//                        closeDrawer = { coroutineScope.launch { sizeAwareDrawerState.close() } },
-//                        modifier = Modifier
-//                            .statusBarsPadding()
-//                            .navigationBarsPadding()
-//                    )
-//                },
-//                drawerState = sizeAwareDrawerState,
-//                gesturesEnabled = true
-//            ) {
+            ModalDrawer(
+                drawerContent = {
+                    AppDrawer(
+                        currentRoute = currentRoute,
+                        navigateToHome = { navController.navigate(Screen.Main.route) },
+                        showAbout = { showBottomSheet(coroutineScope, aboutScaffoldState) },
+                        closeDrawer = { coroutineScope.launch { sizeAwareDrawerState.close() } },
+                        modifier = Modifier
+                            .statusBarsPadding()
+                            .navigationBarsPadding()
+                    )
+                },
+                drawerState = sizeAwareDrawerState,
+                gesturesEnabled = true
+            ) {
                 Navigation(
                     navController = navController,
                     scaffoldState = scaffoldState,
                     openDrawer = {
-//                        coroutineScope.launch { sizeAwareDrawerState.open() }
+                        coroutineScope.launch { sizeAwareDrawerState.open() }
                     },
                     showBottomSheet = {
                         showBottomSheet(
@@ -78,12 +77,12 @@ fun MainApp() {
                     bottomSheetScaffoldState = loginScaffoldState
                 )
             }
-//        }
+        }
     }
 }
 
 @ExperimentalMaterialApi
-private fun showBottomSheet(
+fun showBottomSheet(
     coroutineScope: CoroutineScope,
     bottomSheetScaffoldState: BottomSheetScaffoldState
 ) {
@@ -99,7 +98,7 @@ private fun showBottomSheet(
  * Determine the drawer state to pass to the modal drawer.
  */
 @Composable
-private fun rememberSizeAwareDrawerState(isExpandedScreen: Boolean): DrawerState {
+fun rememberSizeAwareDrawerState(isExpandedScreen: Boolean): DrawerState {
     val drawerState = rememberDrawerState(DrawerValue.Closed)
 
     return if (!isExpandedScreen) {

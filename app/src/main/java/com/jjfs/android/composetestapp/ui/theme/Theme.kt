@@ -19,8 +19,9 @@ private val LightColorPalette = lightColors(
     primaryVariant = primaryDark,
     secondary = secondaryColor,
     secondaryVariant = primaryLight,
-    background = white300,
+    background = primaryLight,
     error = error
+
 //    primary = mainColor,
 //    primaryVariant = Purple700,
 //    secondary = Teal200,

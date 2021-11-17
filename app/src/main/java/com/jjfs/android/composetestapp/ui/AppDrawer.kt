@@ -21,7 +21,7 @@ import com.jjfs.android.composetestapp.R
 fun AppDrawer(
     currentRoute: String,
     navigateToHome: () -> Unit,
-    showAbout: () -> Unit,
+    navigateToGraphql: () -> Unit,
     closeDrawer: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -43,7 +43,15 @@ fun AppDrawer(
             label = stringResource(id = R.string.about),
             isSelected = currentRoute == Screen.Detail.route,
             action = {
-                showAbout()
+                closeDrawer()
+            }
+        )
+        DrawerButton(
+            icon = Icons.Filled.Home,
+            label = stringResource(id = R.string.graphql),
+            isSelected = currentRoute == Screen.Graphql.route,
+            action = {
+                navigateToGraphql()
                 closeDrawer()
             }
         )

@@ -1,33 +1,28 @@
 package com.jjfs.android.composetestapp.ui.screens.main
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.jjfs.android.composetestapp.business.domain.models.OperationResult
 import com.jjfs.android.composetestapp.business.domain.models.Order
-import com.jjfs.android.composetestapp.business.repository.NetworkService
 import com.jjfs.android.composetestapp.business.repository.OrderRepository
 import com.jjfs.android.composetestapp.business.repository.UserNotAuthenticatedException
 import com.jjfs.android.composetestapp.ui.Screen
+import com.jjfs.android.composetestapp.ui.components.CommonViewModel
 import com.jjfs.android.composetestapp.ui.utils.Event
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
-import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import java.time.LocalDateTime
 
-class MainViewModel(
-    private val orderRepository: OrderRepository,
-    private val networkService: NetworkService
-): ViewModel() {
+class MainViewModel(private val orderRepository: OrderRepository): CommonViewModel() {
 
     private val _stateFlow = MutableStateFlow(MainViewModelState())
     val stateFlow = _stateFlow.asStateFlow()
 
-    private val _eventChannel = Channel<Event>(Channel.BUFFERED)
-    val eventChannel = _eventChannel.receiveAsFlow()
+//    private val _eventChannel = Channel<Event>(Channel.BUFFERED)
+//    val eventChannel = _eventChannel.receiveAsFlow()
 
     init {
        getOrders()
@@ -35,14 +30,17 @@ class MainViewModel(
 
     fun getOrders() {
         orderRepository.getOrders()
-            .onEach { result ->
-                when(result) {
+            .catch { err ->
+                if(err is UserNotAuthenticatedException)
+                    _eventChannel.emit(Event.OpenLogin { getOrders() })
+            }
+            .onEach { result -> when(result) {
                     is OperationResult.Success -> {
                         _stateFlow.value = MainViewModelState(orders = ordersList)
                     }
                     is OperationResult.Failure -> {
                         if(result.reason is UserNotAuthenticatedException)
-                            _eventChannel.send(Event.OpenLogin { getOrders() })
+                            _eventChannel.emit(Event.OpenLogin { getOrders() })
                         else
                             _stateFlow.value = MainViewModelState(error = result.reason.message ?: "Error")
                     }
@@ -56,10 +54,9 @@ class MainViewModel(
     }
 
     fun swipeRight(orderId: String) {
-        Log.i("Mainviewmodel", "swipe right!")
         val arg = stateFlow.value.orders.first { it.orderId == orderId }
          viewModelScope.launch {
-             _eventChannel.send(Event.Navigate(
+             _eventChannel.emit(Event.Navigate(
                  Screen.Detail,
                  Json.encodeToString(arg)
              ))
@@ -67,14 +64,17 @@ class MainViewModel(
     }
 
     fun swipeLeft(orderId: String) {
-        Log.i("Mainviewmodel", "swipe left!")
         removeOrder(orderId)
     }
 
-    fun removeOrder(orderId: String) {
+    private fun removeOrder(orderId: String) {
         val index = stateFlow.value.orders.indexOfFirst { it.orderId == orderId }
         val newList = _stateFlow.value.orders.toMutableList().also { it.removeAt(index)  }
         _stateFlow.value =  _stateFlow.value.copy(orders = newList)
+    }
+
+    fun getOrderById(orderId: String): Order {
+        return stateFlow.value.orders.first { it.orderId == orderId }
     }
 }
 

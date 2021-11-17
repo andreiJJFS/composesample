@@ -7,12 +7,13 @@ import com.jjfs.android.composetestapp.business.domain.models.Order
 import com.jjfs.android.composetestapp.business.domain.models.onFailure
 import com.jjfs.android.composetestapp.business.domain.models.onSuccess
 import com.jjfs.android.composetestapp.business.repository.OrderRepository
+import com.jjfs.android.composetestapp.ui.components.CommonViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 
-class DetailViewModel(private val orderRepository: OrderRepository) : ViewModel() {
+class DetailViewModel(private val orderRepository: OrderRepository) : CommonViewModel() {
 
     private val _stateFlow = MutableStateFlow(DetailViewModelState())
     val stateFlow = _stateFlow.asStateFlow()

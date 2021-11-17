@@ -2,6 +2,7 @@
     <string name="app_name">ComposeTestApp</string>
     <string name="home">Home</string>
     <string name="about">About</string>
+    <string name="graphql">Graphql</string>
     <string name="cd_open_navigation_drawer">open navigation drawer</string>
     <string name="cd_search">search</string>
 </resources>

@@ -6,12 +6,11 @@ import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavController
 import com.jjfs.android.composetestapp.business.domain.models.Order
 import com.jjfs.android.composetestapp.ui.components.BaseScaffold
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.koin.androidx.compose.getViewModel
 
 @ExperimentalMaterialApi
@@ -23,6 +22,7 @@ fun DetailScreen(
     openDrawer: () -> Unit,
     order: Order,
     viewModel: DetailViewModel = getViewModel(),
+    scaffoldState: ScaffoldState,
 ) {
     val state by viewModel.stateFlow.collectAsState()
 
@@ -35,7 +35,10 @@ fun DetailScreen(
         bottomSheetScaffoldState = bottomSheetScaffoldState,
         showBottomSheet = { /*TODO*/ },
         onDismissCallback = { /*TODO*/ },
-        openDrawer = openDrawer
+        openDrawer = openDrawer,
+        viewModel = viewModel,
+        scaffoldState = scaffoldState,
+        onNav = onNav,
     ) {
         DetailScreenContent(
             order = state.order,
@@ -114,7 +117,11 @@ fun DescriptionCard(description: String, onSubmit: (String) -> Unit) {
             Text("Description: $description")
             Spacer(modifier = Modifier.padding(8.dp))
             Row(verticalAlignment = Alignment.CenterVertically) {
-                OutlinedTextField(value = descriptionTextInput, onValueChange = { descriptionTextInput = it })
+                OutlinedTextField(
+                    value = descriptionTextInput,
+                    onValueChange = { descriptionTextInput = it },
+                    modifier =  Modifier.testTag("descriptionInput")
+                )
                 Button(onClick = { onSubmit(descriptionTextInput) }, modifier = Modifier.fillMaxWidth()) {
                     Text(
                         text = "Submit",

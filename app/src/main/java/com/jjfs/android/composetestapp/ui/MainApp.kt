@@ -23,11 +23,6 @@ import kotlinx.coroutines.launch
 @Composable
 fun MainApp() {
     ComposeTestAppTheme {
-//        val systemUiController = rememberSystemUiController()
-//        val darkIcons = MaterialTheme.colors.isLight
-//        SideEffect {
-//            systemUiController.setSystemBarsColor(Color.Transparent, darkIcons = darkIcons)
-//        }
         Surface(
             color = MaterialTheme.colors.background,
             modifier = Modifier.fillMaxSize()
@@ -43,16 +38,13 @@ fun MainApp() {
             val loginScaffoldState = rememberBottomSheetScaffoldState(
                 bottomSheetState = rememberBottomSheetState(BottomSheetValue.Collapsed)
             )
-            val aboutScaffoldState = rememberBottomSheetScaffoldState(
-                bottomSheetState = rememberBottomSheetState(BottomSheetValue.Collapsed)
-            )
 
             ModalDrawer(
                 drawerContent = {
                     AppDrawer(
                         currentRoute = currentRoute,
                         navigateToHome = { navController.navigate(Screen.Main.route) },
-                        showAbout = { showBottomSheet(coroutineScope, aboutScaffoldState) },
+                        navigateToGraphql = { navController.navigate(Screen.Graphql.route) },
                         closeDrawer = { coroutineScope.launch { sizeAwareDrawerState.close() } },
                         modifier = Modifier
                             .statusBarsPadding()

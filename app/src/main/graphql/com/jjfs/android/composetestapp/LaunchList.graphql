@@ -1,0 +1,51 @@
+query LaunchList($cursor: String) {
+    launches(after: $cursor) {
+        cursor
+        hasMore
+        launches {
+            id
+            site
+            mission {
+                name
+                missionPatch(size: SMALL)
+            }
+        }
+    }
+}
+
+#query LaunchList($page: Int) {
+#    launches {
+#        cursor
+#        hasMore
+#        launches {
+#            ...LaunchDetail
+#        }
+##        launches {
+##            id
+##            site
+##            mission {
+##                name
+##                missionPatch(size: SMALL)
+##            }
+##        }
+#    }
+#}
+#
+#fragment LaunchDetail on Launch {
+#    id,
+#    site,
+#    mission {
+#        name, missionPatch
+#    }
+#}
+#
+#type Launch {
+#    id: String
+#    site: String
+#    mission: [Mission]
+#}
+#
+#type Mission {
+#    name: String,
+#    missionPatch: String
+#}

@@ -1,11 +1,17 @@
 package com.jjfs.android.composetestapp.ui.screens.auth
 
+import android.content.res.Resources
+import android.util.Log
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.jjfs.android.composetestapp.ui.utils.Event
 import kotlinx.coroutines.flow.collect
 import org.koin.androidx.compose.getViewModel
@@ -44,18 +50,31 @@ fun LoginScreen(
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier
                 .fillMaxSize()
-                .padding(8.dp),
+                .background(MaterialTheme.colors.surface)
         ) {
-            Text(text = "Please enter your pin number", modifier = Modifier.padding(8.dp))
+            Text(
+                text = "Please enter your pin number",
+                color = MaterialTheme.colors.primary,
+                fontWeight = FontWeight.Bold,
+                fontSize = 18.sp,
+                modifier = Modifier.padding(8.dp)
+            )
+            Spacer(modifier = Modifier.padding(16.dp))
+
             OutlinedTextField(
                 value = text,
                 onValueChange = { text = it },
                 isError = state.error.isNotEmpty(),
+                modifier = Modifier.testTag("pinInput"),
+                colors = TextFieldDefaults.outlinedTextFieldColors(
+                    unfocusedBorderColor = MaterialTheme.colors.primary,
+                    textColor = MaterialTheme.colors.primary
+                )
             )
-            Spacer(modifier = Modifier.padding(8.dp))
+            Spacer(modifier = Modifier.padding(16.dp))
 
             LoginButton(
-                onClick = { viewModel.doLogin(text) },
+                onClick = { viewModel.doLogin() },
                 isLoading = state.isLoading
             )
         }

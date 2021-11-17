@@ -12,6 +12,7 @@ val tertiaryColor = Color(0xFF48CAE4)
 val primaryLight = Color(0xFF90E0EF)
 val secondaryLight = Color(0xFFADE8F4)
 val tertiaryLight = Color(0xFFCAF0F8)
+val background = Color(0xFFdcf7fc)
 
 
 val mainColor = Color(0xFF00c497)

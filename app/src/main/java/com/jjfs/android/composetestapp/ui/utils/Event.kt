@@ -3,8 +3,8 @@ package com.jjfs.android.composetestapp.ui.utils
 import com.jjfs.android.composetestapp.ui.Screen
 
 sealed class Event {
-    data class Navigate<T>(val screen: Screen, val args: T): Event()
-    data class OpenLogin(val callback: () -> Unit): Event()
+    data class Navigate<T>(val screen: Screen, val args: T? = null): Event()
+    data class OpenLogin(val callback: () -> Unit = {}): Event()
     object DismissLogin: Event()
     data class Toast(val message: String): Event()
     data class SetTitle(val title: String): Event()

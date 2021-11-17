@@ -16,62 +16,71 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import com.jjfs.android.composetestapp.ui.components.BaseScaffold
 import com.jjfs.android.composetestapp.ui.utils.Event
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.collectLatest
-import kotlinx.serialization.ExperimentalSerializationApi
-import org.koin.androidx.compose.getViewModel
 
+@ExperimentalCoroutinesApi
 @ExperimentalMaterialApi
 @Composable
 fun MainScreen(
     onNav: (String) -> Unit = {},
-    scaffoldState: ScaffoldState,
-    openDrawer: () -> Unit,
-    viewModel: MainViewModel = getViewModel(),
-    showBottomSheet: () -> Unit,
-    bottomSheetScaffoldState: BottomSheetScaffoldState,
+    openDrawer: () -> Unit = {},
+    viewModel: MainViewModel,
+    showBottomSheet: () -> Unit = {},
+    scaffoldState: ScaffoldState = rememberScaffoldState(),
+    bottomSheetScaffoldState: BottomSheetScaffoldState = rememberBottomSheetScaffoldState(),
 ) {
     val state by viewModel.stateFlow.collectAsState()
 
-    LaunchedEffect(key1 = true) {
-        viewModel.eventChannel.collectLatest { event ->
-            when (event) {
-                is Event.Navigate<*> -> onNav("${event.screen.route}/${event.args}")
-                is Event.OpenLogin -> showBottomSheet()
-                is Event.ShowSnackBar ->
-                    scaffoldState.snackbarHostState.showSnackbar(
-                        message = event.message,
-                        actionLabel = "Swipe!"
+//    LaunchedEffect(key1 = true) {
+//        viewModel.eventChannel.collectLatest { event ->
+//            when (event) {
+//                is Event.Navigate<*> -> {
+//                    if(event.args == null) onNav(event.screen.route)
+//                    else onNav("${event.screen.route}/${event.args}")
+//                }
+//                is Event.OpenLogin -> showBottomSheet()
+//                is Event.ShowSnackBar ->
+//                    scaffoldState.snackbarHostState.showSnackbar(
+//                        message = event.message,
+//                        actionLabel = "Swipe!"
+//                    )
+//                else -> Unit
+//            }
+//        }
+//    }
+        BaseScaffold(
+            bottomSheetScaffoldState = bottomSheetScaffoldState,
+            openDrawer = openDrawer,
+            onDismissCallback = { viewModel.getOrders() },
+            showBottomSheet = showBottomSheet,
+            scaffoldState = scaffoldState,
+            onNav = onNav,
+            viewModel = viewModel
+        ) {
+            SwipeRefresh(
+                state = rememberSwipeRefreshState(state.isLoading),
+                onRefresh = { viewModel.getOrders() },
+                content = {
+                    MainScreenContent(
+                        state = state,
+                        swipeLeft = { id: String -> viewModel.swipeLeft(id) },
+                        swipeRight = { id: String ->
+                            viewModel.swipeRight(id)
+//                        val args = viewModel.getOrderById(id)
+//                        onNav("${Screen.Detail.route}/${Json.encodeToString(args)}")
+                        }
                     )
-                else -> Unit
-            }
+                }
+            )
         }
-    }
-
-    BaseScaffold(
-        bottomSheetScaffoldState = bottomSheetScaffoldState,
-        openDrawer = openDrawer,
-        onDismissCallback = { viewModel.getOrders() },
-        showBottomSheet = showBottomSheet
-    ) {
-        SwipeRefresh(
-            state = rememberSwipeRefreshState(state.isLoading),
-            onRefresh = { viewModel.getOrders() },
-            content = {
-                MainScreenContent(
-                    state = state,
-                    swipeLeft = { id: String -> viewModel.swipeLeft(id) },
-                    swipeRight = { id: String ->  viewModel.swipeRight(id) }
-                )
-            }
-        )
-    }
 }
 
 @ExperimentalMaterialApi
@@ -87,12 +96,16 @@ fun MainScreenContent(
         modifier = Modifier.fillMaxSize()
     ) {
         Spacer(modifier = Modifier.padding(8.dp))
-        OrderList(
-            orderList = state.orders.map { OrderItem(it) },
-            swipeLeft = swipeLeft,
-            swipeRight = swipeRight
-        )
-        Spacer(modifier = Modifier.padding(8.dp))
+        if(state.error.isNotEmpty()) {
+            Text(text = state.error)
+        } else {
+            OrderList(
+                orderList = state.orders.map { OrderItem(it) },
+                swipeLeft = swipeLeft,
+                swipeRight = swipeRight
+            )
+            Spacer(modifier = Modifier.padding(8.dp))
+        }
     }
 }
 
@@ -103,12 +116,13 @@ fun OrderList(
     swipeLeft: (String) -> Unit,
     swipeRight: (String) -> Unit,
 ) {
-    Box {
+    Box(modifier = Modifier.semantics {
+        contentDescription = "list"
+    }) {
         LazyColumn {
             items(
                 items = orderList,
                 key = { order -> order.orderId },
-
             ) { order ->
                 SwipeableOrder(
                     order = order,
@@ -135,7 +149,6 @@ fun SwipeableOrder(
                 DismissValue.Default -> Unit
             }
             direction != DismissValue.DismissedToEnd
-//                    || direction != DismissValue.DismissedToStart
         }
     )
     SwipeToDismiss(
@@ -167,7 +180,7 @@ fun SwipeableOrder(
             ) {
                 Icon(
                     icon,
-                    contentDescription = "Localized description",
+                    contentDescription = "Icon",
                     modifier = Modifier
                         .scale(1f)
                         .padding(16.dp)
@@ -185,7 +198,9 @@ fun OrderCard(
 ) {
     Card(
         shape = MaterialTheme.shapes.small,
-        modifier = Modifier.fillMaxWidth().clickable {  },
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable { },
         elevation = animateDpAsState(
             if (direction != null) 8.dp else 0.dp
         ).value
